@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Analytics Dashboard - Attendance Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -14,30 +14,95 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 300% 100%;
+            animation: shimmer 3s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
         }
 
         .header h1 {
-            color: #667eea;
-            font-size: 32px;
-            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 36px;
+            font-weight: 800;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: '📊';
+            -webkit-text-fill-color: initial;
+            font-size: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .header p {
@@ -46,144 +111,250 @@
         }
 
         .nav-bar {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 18px 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .nav-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
             text-decoration: none;
-            color: #333;
+            color: #444;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .nav-btn:hover {
             border-color: #667eea;
-            background: #f8f9ff;
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaff 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
         }
 
         .nav-btn.home {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-color: transparent;
-        }
-
-        .nav-btn.home:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 30px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
         }
 
         .stat-card .icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .stat-card .value {
-            font-size: 36px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
         }
 
         .stat-card .label {
             font-size: 14px;
             color: #666;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
 
         .chart-section {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
 
         .chart-header h2 {
             color: #333;
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .chart-type-selector {
             display: flex;
-            gap: 10px;
-            background: #f0f0f0;
-            padding: 5px;
-            border-radius: 10px;
+            gap: 8px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 6px;
+            border-radius: 16px;
         }
 
         .chart-type-btn {
-            padding: 10px 20px;
+            padding: 14px 28px;
             border: none;
             background: transparent;
             color: #666;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 14px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .chart-type-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .chart-type-btn:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* Dropdown selector alternative */
+        .chart-dropdown-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chart-dropdown-label {
+            font-weight: 600;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-dropdown {
+            padding: 14px 45px 14px 20px;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 18px;
+        }
+
+        .chart-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
         }
 
         .chart-container {
             position: relative;
-            height: 400px;
+            height: 450px;
             margin-bottom: 20px;
         }
 
-        .table-container {
+        .table-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             overflow-x: auto;
-            margin-top: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
         }
 
         table {
@@ -198,20 +369,20 @@
 
         thead th {
             color: white;
-            padding: 15px;
+            padding: 18px 16px;
             text-align: left;
             font-weight: 600;
             font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         thead th:first-child {
-            border-top-left-radius: 10px;
+            border-top-left-radius: 16px;
         }
 
         thead th:last-child {
-            border-top-right-radius: 10px;
+            border-top-right-radius: 16px;
         }
 
         tbody tr {
@@ -219,101 +390,96 @@
             transition: all 0.3s ease;
         }
 
+        tbody tr:nth-child(even) {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f5f5f5 100%);
+        }
+
         tbody tr:hover {
-            background: #f8f9ff;
+            background: linear-gradient(135deg, #e8eaff 0%, #f0f0ff 100%);
+            transform: scale(1.01);
         }
 
         tbody td {
-            padding: 15px;
+            padding: 18px 16px;
             border-bottom: 1px solid #f0f0f0;
             color: #333;
         }
 
-        .percentage {
+        .percentage-badge {
             font-weight: 700;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
         }
 
-        .percentage.high {
-            background: #d4edda;
-            color: #155724;
+        .percentage-badge.high {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
         }
 
-        .percentage.medium {
-            background: #fff3cd;
-            color: #856404;
+        .percentage-badge.medium {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
         }
 
-        .percentage.low {
-            background: #f8d7da;
-            color: #721c24;
+        .percentage-badge.low {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
         }
 
-        .filter-section {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .filter-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .filter-group {
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
         }
 
-        .filter-group label {
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-name {
             font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
         }
 
-        .filter-group input,
-        .filter-group select {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
+        .reg-no {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 6px 12px;
             border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-primary {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
+            font-size: 12px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: #374151;
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: #666;
             font-size: 18px;
+        }
+
+        .loading-spinner {
+            font-size: 50px;
+            margin-bottom: 20px;
+            animation: spin 2s linear infinite;
+            display: block;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
@@ -324,26 +490,46 @@
 
             .chart-type-selector {
                 width: 100%;
-                justify-content: space-between;
+                overflow-x: auto;
             }
 
             .chart-type-btn {
                 flex: 1;
-                padding: 8px 12px;
+                padding: 12px 16px;
                 font-size: 12px;
             }
 
             .header h1 {
-                font-size: 24px;
+                font-size: 26px;
             }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Attendance Analytics Dashboard</h1>
-            <p>Comprehensive attendance analysis with interactive visualizations</p>
+            <h1>Analytics Dashboard</h1>
+            <p>✨ Comprehensive attendance analysis with interactive visualizations</p>
         </div>
 
         <div class="nav-bar">
@@ -354,22 +540,22 @@
 
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card">
-                <div class="icon">👥</div>
+                <span class="icon">👥</span>
                 <div class="value" id="totalStudents">--</div>
                 <div class="label">Total Students</div>
             </div>
             <div class="stat-card">
-                <div class="icon">✅</div>
+                <span class="icon">✅</span>
                 <div class="value" id="avgAttendance">--%</div>
                 <div class="label">Average Attendance</div>
             </div>
             <div class="stat-card">
-                <div class="icon">📚</div>
+                <span class="icon">📚</span>
                 <div class="value" id="totalClasses">--</div>
                 <div class="label">Total Classes</div>
             </div>
             <div class="stat-card">
-                <div class="icon">⏰</div>
+                <span class="icon">⏰</span>
                 <div class="value" id="totalLate">--</div>
                 <div class="label">Total Late</div>
             </div>
@@ -378,46 +564,66 @@
         <div class="chart-section">
             <div class="chart-header">
                 <h2>📈 Attendance Visualization</h2>
+                
+                <!-- Button-style selector -->
                 <div class="chart-type-selector">
-                    <button class="chart-type-btn active" onclick="changeChartType('bar')">
+                    <button class="chart-type-btn active" onclick="changeChartType('bar', this)">
                         📊 Bar Chart
                     </button>
-                    <button class="chart-type-btn" onclick="changeChartType('line')">
+                    <button class="chart-type-btn" onclick="changeChartType('line', this)">
                         📈 Line Chart
                     </button>
-                    <button class="chart-type-btn" onclick="changeChartType('pie')">
+                    <button class="chart-type-btn" onclick="changeChartType('pie', this)">
                         🥧 Pie Chart
+                    </button>
+                    <button class="chart-type-btn" onclick="changeChartType('doughnut', this)">
+                        🍩 Doughnut
                     </button>
                 </div>
             </div>
+
+            <!-- Dropdown alternative -->
+            <div class="chart-dropdown-container" style="margin-bottom: 25px;">
+                <span class="chart-dropdown-label">📊 Select Chart Type:</span>
+                <select class="chart-dropdown" id="chartTypeDropdown" onchange="changeChartTypeFromDropdown()">
+                    <option value="bar">📊 Bar Chart</option>
+                    <option value="line">📈 Line Chart</option>
+                    <option value="pie">🥧 Pie Chart</option>
+                    <option value="doughnut">🍩 Doughnut Chart</option>
+                    <option value="polarArea">🎯 Polar Area Chart</option>
+                </select>
+            </div>
+
             <div class="chart-container">
                 <canvas id="attendanceChart"></canvas>
             </div>
         </div>
 
-        <div class="chart-section">
-            <h2 style="margin-bottom: 20px;">📋 Detailed Attendance Report</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Reg No</th>
-                            <th>Student Name</th>
-                            <th>Total Classes</th>
-                            <th>Present</th>
-                            <th>Absent</th>
-                            <th>Late</th>
-                            <th>Attendance %</th>
-                        </tr>
-                    </thead>
-                    <tbody id="analyticsTableBody">
-                        <tr>
-                            <td colspan="8" class="loading">Loading analytics data...</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="table-section">
+            <div class="section-header">
+                <h2>📋 Detailed Attendance Report</h2>
             </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#️⃣</th>
+                        <th>👤 Student</th>
+                        <th>📚 Total Classes</th>
+                        <th>✅ Present</th>
+                        <th>❌ Absent</th>
+                        <th>⏰ Late</th>
+                        <th>📊 Attendance %</th>
+                    </tr>
+                </thead>
+                <tbody id="analyticsTableBody">
+                    <tr>
+                        <td colspan="7" class="loading">
+                            <span class="loading-spinner">⏳</span>
+                            <div>Loading analytics data...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -442,8 +648,10 @@
                 console.error('Error loading analytics:', error);
                 document.getElementById('analyticsTableBody').innerHTML = `
                     <tr>
-                        <td colspan="8" style="text-align: center; color: #dc3545;">
-                            ❌ Error loading analytics data. Make sure the API server is running.
+                        <td colspan="7" style="text-align: center; color: #ef4444; padding: 60px;">
+                            <span style="font-size: 50px; display: block; margin-bottom: 15px;">❌</span>
+                            <div style="font-weight: 600;">Error loading analytics data</div>
+                            <div style="color: #666; margin-top: 10px; font-size: 14px;">Make sure the API server is running on port 5000</div>
                         </td>
                     </tr>
                 `;
@@ -470,21 +678,31 @@
             analyticsData.forEach((student, index) => {
                 const percentage = student.attendance_percentage || 0;
                 let percentageClass = 'low';
-                if (percentage >= 75) percentageClass = 'high';
-                else if (percentage >= 50) percentageClass = 'medium';
+                let emoji = '😟';
+                if (percentage >= 75) { percentageClass = 'high'; emoji = '🎉'; }
+                else if (percentage >= 50) { percentageClass = 'medium'; emoji = '😐'; }
+
+                const initials = student.name.split(' ').map(n => n[0]).join('').substring(0, 2);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${student.reg_no}</td>
-                    <td><strong>${student.name}</strong></td>
-                    <td>${student.total_classes || 0}</td>
-                    <td style="color: #28a745; font-weight: 600;">${student.total_present || 0}</td>
-                    <td style="color: #dc3545; font-weight: 600;">${student.total_absent || 0}</td>
-                    <td style="color: #ffc107; font-weight: 600;">${student.total_late || 0}</td>
+                    <td><strong>${index + 1}</strong></td>
                     <td>
-                        <span class="percentage ${percentageClass}">
-                            ${percentage.toFixed(1)}%
+                        <div class="student-info">
+                            <div class="student-avatar">${initials}</div>
+                            <div>
+                                <div class="student-name">${student.name}</div>
+                                <span class="reg-no">${student.reg_no}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${student.total_classes || 0}</strong></td>
+                    <td style="color: #10b981; font-weight: 700;">✅ ${student.total_present || 0}</td>
+                    <td style="color: #ef4444; font-weight: 700;">❌ ${student.total_absent || 0}</td>
+                    <td style="color: #f59e0b; font-weight: 700;">⏰ ${student.total_late || 0}</td>
+                    <td>
+                        <span class="percentage-badge ${percentageClass}">
+                            ${emoji} ${percentage.toFixed(1)}%
                         </span>
                     </td>
                 `;
@@ -495,21 +713,19 @@
         function renderChart() {
             const ctx = document.getElementById('attendanceChart').getContext('2d');
 
-            // Destroy existing chart if any
             if (currentChart) {
                 currentChart.destroy();
             }
 
-            // Prepare data for different chart types
-            if (currentChartType === 'pie') {
-                renderPieChart(ctx);
+            if (currentChartType === 'pie' || currentChartType === 'doughnut' || currentChartType === 'polarArea') {
+                renderCircularChart(ctx);
             } else {
                 renderBarOrLineChart(ctx);
             }
         }
 
         function renderBarOrLineChart(ctx) {
-            const labels = analyticsData.map(s => s.name.split(' ')[0]); // First name only
+            const labels = analyticsData.map(s => s.name.split(' ')[0]);
             const presentData = analyticsData.map(s => s.total_present || 0);
             const absentData = analyticsData.map(s => s.total_absent || 0);
             const lateData = analyticsData.map(s => s.total_late || 0);
@@ -520,28 +736,34 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Present',
+                            label: '✅ Present',
                             data: presentData,
-                            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                            borderColor: 'rgba(40, 167, 69, 1)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
                             borderWidth: 2,
-                            tension: 0.4
+                            tension: 0.4,
+                            fill: currentChartType === 'line' ? false : true,
+                            borderRadius: currentChartType === 'bar' ? 8 : 0
                         },
                         {
-                            label: 'Absent',
+                            label: '❌ Absent',
                             data: absentData,
-                            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                            borderColor: 'rgba(220, 53, 69, 1)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
                             borderWidth: 2,
-                            tension: 0.4
+                            tension: 0.4,
+                            fill: currentChartType === 'line' ? false : true,
+                            borderRadius: currentChartType === 'bar' ? 8 : 0
                         },
                         {
-                            label: 'Late',
+                            label: '⏰ Late',
                             data: lateData,
-                            backgroundColor: 'rgba(255, 193, 7, 0.7)',
-                            borderColor: 'rgba(255, 193, 7, 1)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
                             borderWidth: 2,
-                            tension: 0.4
+                            tension: 0.4,
+                            fill: currentChartType === 'line' ? false : true,
+                            borderRadius: currentChartType === 'bar' ? 8 : 0
                         }
                     ]
                 },
@@ -554,38 +776,43 @@
                             labels: {
                                 font: {
                                     size: 14,
-                                    family: 'Inter'
+                                    family: 'Poppins',
+                                    weight: 600
                                 },
-                                padding: 15
+                                padding: 20,
+                                usePointStyle: true
                             }
                         },
                         title: {
                             display: true,
-                            text: 'Student Attendance Overview',
+                            text: '📊 Student Attendance Overview',
                             font: {
-                                size: 18,
-                                family: 'Inter',
+                                size: 20,
+                                family: 'Poppins',
                                 weight: 'bold'
                             },
-                            padding: 20
+                            padding: 20,
+                            color: '#333'
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                font: {
-                                    family: 'Inter'
-                                }
+                                font: { family: 'Poppins', weight: 500 }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             ticks: {
-                                font: {
-                                    family: 'Inter'
-                                },
+                                font: { family: 'Poppins', weight: 500 },
                                 maxRotation: 45,
                                 minRotation: 45
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     }
@@ -593,28 +820,29 @@
             });
         }
 
-        function renderPieChart(ctx) {
+        function renderCircularChart(ctx) {
             const totalPresent = analyticsData.reduce((sum, s) => sum + (s.total_present || 0), 0);
             const totalAbsent = analyticsData.reduce((sum, s) => sum + (s.total_absent || 0), 0);
             const totalLate = analyticsData.reduce((sum, s) => sum + (s.total_late || 0), 0);
 
             currentChart = new Chart(ctx, {
-                type: 'pie',
+                type: currentChartType,
                 data: {
-                    labels: ['Present', 'Absent', 'Late'],
+                    labels: ['✅ Present', '❌ Absent', '⏰ Late'],
                     datasets: [{
                         data: [totalPresent, totalAbsent, totalLate],
                         backgroundColor: [
-                            'rgba(40, 167, 69, 0.8)',
-                            'rgba(220, 53, 69, 0.8)',
-                            'rgba(255, 193, 7, 0.8)'
+                            'rgba(16, 185, 129, 0.9)',
+                            'rgba(239, 68, 68, 0.9)',
+                            'rgba(245, 158, 11, 0.9)'
                         ],
                         borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(220, 53, 69, 1)',
-                            'rgba(255, 193, 7, 1)'
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 158, 11, 1)'
                         ],
-                        borderWidth: 2
+                        borderWidth: 3,
+                        hoverOffset: 20
                     }]
                 },
                 options: {
@@ -622,38 +850,59 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'top',
+                            position: 'right',
                             labels: {
                                 font: {
                                     size: 16,
-                                    family: 'Inter'
+                                    family: 'Poppins',
+                                    weight: 600
                                 },
-                                padding: 20
+                                padding: 25,
+                                usePointStyle: true
                             }
                         },
                         title: {
                             display: true,
-                            text: 'Overall Attendance Distribution',
+                            text: '🥧 Overall Attendance Distribution',
                             font: {
-                                size: 18,
-                                family: 'Inter',
+                                size: 20,
+                                family: 'Poppins',
                                 weight: 'bold'
                             },
-                            padding: 20
+                            padding: 20,
+                            color: '#333'
                         }
                     }
                 }
             });
         }
 
-        function changeChartType(type) {
+        function changeChartType(type, button) {
             currentChartType = type;
             
             // Update button states
             document.querySelectorAll('.chart-type-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            button.classList.add('active');
+            
+            // Update dropdown
+            document.getElementById('chartTypeDropdown').value = type;
+            
+            renderChart();
+        }
+
+        function changeChartTypeFromDropdown() {
+            const dropdown = document.getElementById('chartTypeDropdown');
+            currentChartType = dropdown.value;
+            
+            // Update button states
+            document.querySelectorAll('.chart-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.onclick.toString().includes(`'${currentChartType}'`)) {
+                    btn.classList.add('active');
+                }
+            });
             
             renderChart();
         }
