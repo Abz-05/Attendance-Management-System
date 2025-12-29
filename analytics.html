@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Analytics Dashboard - Attendance Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-section {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .chart-header h2 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .chart-type-selector {
+            display: flex;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .chart-type-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #666;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .chart-type-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        thead th {
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        thead th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        thead th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        tbody tr {
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .percentage {
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .percentage.high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .percentage.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .percentage.low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chart-type-selector {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chart-type-btn {
+                flex: 1;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Attendance Analytics Dashboard</h1>
+            <p>Comprehensive attendance analysis with interactive visualizations</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="value" id="totalStudents">--</div>
+                <div class="label">Total Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✅</div>
+                <div class="value" id="avgAttendance">--%</div>
+                <div class="label">Average Attendance</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📚</div>
+                <div class="value" id="totalClasses">--</div>
+                <div class="label">Total Classes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⏰</div>
+                <div class="value" id="totalLate">--</div>
+                <div class="label">Total Late</div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2>📈 Attendance Visualization</h2>
+                <div class="chart-type-selector">
+                    <button class="chart-type-btn active" onclick="changeChartType('bar')">
+                        📊 Bar Chart
+                    </button>
+                    <button class="chart-type-btn" onclick="changeChartType('line')">
+                        📈 Line Chart
+                    </button>
+                    <button class="chart-type-btn" onclick="changeChartType('pie')">
+                        🥧 Pie Chart
+                    </button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2 style="margin-bottom: 20px;">📋 Detailed Attendance Report</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Reg No</th>
+                            <th>Student Name</th>
+                            <th>Total Classes</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Late</th>
+                            <th>Attendance %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analyticsTableBody">
+                        <tr>
+                            <td colspan="8" class="loading">Loading analytics data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let analyticsData = [];
+        let currentChart = null;
+        let currentChartType = 'bar';
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_URL}/attendance/analytics`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    analyticsData = result.data;
+                    updateStats();
+                    renderTable();
+                    renderChart();
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('analyticsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #dc3545;">
+                            ❌ Error loading analytics data. Make sure the API server is running.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const totalStudents = analyticsData.length;
+            const totalClasses = analyticsData.reduce((sum, s) => sum + (s.total_classes || 0), 0);
+            const totalPresent = analyticsData.reduce((sum, s) => sum + (s.total_present || 0), 0);
+            const totalLate = analyticsData.reduce((sum, s) => sum + (s.total_late || 0), 0);
+            const avgAttendance = totalClasses > 0 ? ((totalPresent / totalClasses) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('avgAttendance').textContent = avgAttendance + '%';
+            document.getElementById('totalClasses').textContent = totalClasses;
+            document.getElementById('totalLate').textContent = totalLate;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('analyticsTableBody');
+            tbody.innerHTML = '';
+
+            analyticsData.forEach((student, index) => {
+                const percentage = student.attendance_percentage || 0;
+                let percentageClass = 'low';
+                if (percentage >= 75) percentageClass = 'high';
+                else if (percentage >= 50) percentageClass = 'medium';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.reg_no}</td>
+                    <td><strong>${student.name}</strong></td>
+                    <td>${student.total_classes || 0}</td>
+                    <td style="color: #28a745; font-weight: 600;">${student.total_present || 0}</td>
+                    <td style="color: #dc3545; font-weight: 600;">${student.total_absent || 0}</td>
+                    <td style="color: #ffc107; font-weight: 600;">${student.total_late || 0}</td>
+                    <td>
+                        <span class="percentage ${percentageClass}">
+                            ${percentage.toFixed(1)}%
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+            // Destroy existing chart if any
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            // Prepare data for different chart types
+            if (currentChartType === 'pie') {
+                renderPieChart(ctx);
+            } else {
+                renderBarOrLineChart(ctx);
+            }
+        }
+
+        function renderBarOrLineChart(ctx) {
+            const labels = analyticsData.map(s => s.name.split(' ')[0]); // First name only
+            const presentData = analyticsData.map(s => s.total_present || 0);
+            const absentData = analyticsData.map(s => s.total_absent || 0);
+            const lateData = analyticsData.map(s => s.total_late || 0);
+
+            currentChart = new Chart(ctx, {
+                type: currentChartType,
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Present',
+                            data: presentData,
+                            backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Absent',
+                            data: absentData,
+                            backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                            borderColor: 'rgba(220, 53, 69, 1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Late',
+                            data: lateData,
+                            backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    family: 'Inter'
+                                },
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Student Attendance Overview',
+                            font: {
+                                size: 18,
+                                family: 'Inter',
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPieChart(ctx) {
+            const totalPresent = analyticsData.reduce((sum, s) => sum + (s.total_present || 0), 0);
+            const totalAbsent = analyticsData.reduce((sum, s) => sum + (s.total_absent || 0), 0);
+            const totalLate = analyticsData.reduce((sum, s) => sum + (s.total_late || 0), 0);
+
+            currentChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Present', 'Absent', 'Late'],
+                    datasets: [{
+                        data: [totalPresent, totalAbsent, totalLate],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(220, 53, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 16,
+                                    family: 'Inter'
+                                },
+                                padding: 20
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Overall Attendance Distribution',
+                            font: {
+                                size: 18,
+                                family: 'Inter',
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    }
+                }
+            });
+        }
+
+        function changeChartType(type) {
+            currentChartType = type;
+            
+            // Update button states
+            document.querySelectorAll('.chart-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderChart();
+        }
+
+        // Initialize
+        loadAnalytics();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadAnalytics, 30000);
+    </script>
+</body>
+</html>
