@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Management System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #667eea;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      input[type="number"],
+      input[type="date"],
+      select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #333;
+      }
+
+      input[type="number"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px;
+        padding-right: 40px;
+      }
+
+      .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-submit:active {
+        transform: translateY(0);
+      }
+
+      .btn-submit:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .message.show {
+        display: block;
+      }
+
+      .required {
+        color: #e74c3c;
+      }
+
+      .info-text {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 30px 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📋 Attendance System</h1>
+      <p class="subtitle">Record your daily attendance</p>
+
+      <div id="message" class="message"></div>
+
+      <form id="attendanceForm">
+        <div class="form-group">
+          <label for="employee_id">
+            Employee ID <span class="required">*</span>
+          </label>
+          <input
+            type="number"
+            id="employee_id"
+            name="employee_id"
+            placeholder="Enter your employee ID"
+            required
+            min="1"
+          />
+          <p class="info-text">Sample IDs: 1, 2, or 3</p>
+        </div>
+
+        <div class="form-group">
+          <label for="date"> Date <span class="required">*</span> </label>
+          <input type="date" id="date" name="date" required />
+        </div>
+
+        <div class="form-group">
+          <label for="status">
+            Attendance Status <span class="required">*</span>
+          </label>
+          <select id="status" name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Leave">Leave</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Submit Attendance
+        </button>
+      </form>
+    </div>
+
+    <script>
+      // Set default date to today
+      document.getElementById("date").valueAsDate = new Date();
+
+      // Form submission handler
+      document
+        .getElementById("attendanceForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const submitBtn = document.getElementById("submitBtn");
+          const messageDiv = document.getElementById("message");
+
+          // Disable submit button
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Submitting...";
+
+          // Get form data
+          const formData = new FormData(this);
+
+          // Send AJAX request
+          fetch("attendance_form.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Show message
+              messageDiv.className =
+                "message show " + (data.success ? "success" : "error");
+              messageDiv.textContent = data.message;
+
+              // If successful, reset form
+              if (data.success) {
+                document.getElementById("attendanceForm").reset();
+                document.getElementById("date").valueAsDate = new Date();
+              }
+
+              // Re-enable submit button
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Attendance";
+
+              // Hide message after 5 seconds
+              setTimeout(() => {
+                messageDiv.classList.remove("show");
+              }, 5000);
+            })
+            .catch((error) => {
+              messageDiv.className = "message show error";
+              messageDiv.textContent = "An error occurred. Please try again.";
+
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Attendance";
+
+              console.error("Error:", error);
+            });
+        });
+
+      // Remove error message when user starts typing
+      const inputs = document.querySelectorAll("input, select");
+      inputs.forEach((input) => {
+        input.addEventListener("input", () => {
+          const messageDiv = document.getElementById("message");
+          if (messageDiv.classList.contains("error")) {
+            messageDiv.classList.remove("show");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

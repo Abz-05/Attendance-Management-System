@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="header-section" style="margin-bottom: 3rem; text-align: center;">
+    <h1 style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem;">✨ DS Attendance Hub ✨</h1>
+    <p style="color: var(--text-secondary); font-size: 1.2rem; letter-spacing: 1px;">3rd Year Data Science & Analytics • Innovation Lab 🚀</p>
+</div>
+
+<div class="grid-stats">
+    <div class="card stat-card">
+        <div class="stat-icon">👨‍🎓</div>
+        <span class="stat-value" id="stat-students">23</span>
+        <span class="stat-label">Enrolled Students</span>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon">⏰</div>
+        <span class="stat-value" id="stat-periods" style="color: var(--primary);">5</span>
+        <span class="stat-label">Daily Sessions</span>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon">📅</div>
+        <span class="stat-value" id="stat-date" style="font-size: 1.5rem; margin-top: 1rem;">{{ stats.today_date }}</span>
+        <span class="stat-label">Today's Timeline</span>
+    </div>
+</div>
+
+<div class="analysis-section">
+    <div class="card" style="margin-bottom: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <h2><i class="fas fa-chart-line"></i> Today's Performance Analytics 📈</h2>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <select id="chart-type-selector" onchange="updateDailyChart()" class="btn" style="background: var(--glass); padding: 0.5rem 1rem;">
+                    <option value="bar">Bar Chart 📊</option>
+                    <option value="line">Line Chart 📉</option>
+                    <option value="pie">Pie Chart 🥧</option>
+                </select>
+                <input type="date" id="analysis-date" onchange="loadDailyAnalysis()" style="width: auto; padding: 0.5rem 1rem;">
+            </div>
+        </div>
+
+        <div class="chart-container" style="height: 400px; position: relative;">
+            <canvas id="dailyChart"></canvas>
+        </div>
+    </div>
+
+    <div class="grid-stats" id="period-summary-container">
+        <!-- Period wise stats will be loaded here -->
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h3 class="card-title">📖 Comprehensive Day Report</h3>
+        <div class="attendance-grid" id="student-daily-report">
+            <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Select a date to view the analytical report</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let dailyChart = null;
+    let currentData = null;
+    document.getElementById('analysis-date').valueAsDate = new Date();
+
+    async function loadDailyAnalysis() {
+        const dateStr = document.getElementById('analysis-date').value;
+        if (!dateStr) return;
+
+        try {
+            const response = await fetch(`/api/reports/daily/${dateStr}`);
+            const data = await response.json();
+
+            if (data.success) {
+                currentData = data.analysis;
+                renderPeriodSummary(data.analysis.period_summary);
+                renderStudentDaily(data.analysis.student_daily);
+                updateDailyChart();
+            } else {
+                if(dailyChart) dailyChart.destroy();
+                document.getElementById('period-summary-container').innerHTML = '';
+                document.getElementById('student-daily-report').innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No attendance data found for this date 📭</p>';
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    function updateDailyChart() {
+        if (!currentData) return;
+        const type = document.getElementById('chart-type-selector').value;
+        const summary = currentData.period_summary;
+        
+        const labels = summary.map(s => `Period ${s.period}`);
+        const present = summary.map(s => s.present);
+        const absent = summary.map(s => s.absent);
+        const late = summary.map(s => s.late);
+
+        const ctx = document.getElementById('dailyChart').getContext('2d');
+        if (dailyChart) dailyChart.destroy();
+
+        const chartConfig = {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Present ✅',
+                        data: present,
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Absent ❌',
+                        data: absent,
+                        backgroundColor: 'rgba(244, 63, 94, 0.6)',
+                        borderColor: '#f43f5e',
+                        borderWidth: 2,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Late 🕒',
+                        data: late,
+                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
+                        borderColor: '#fbbf24',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#fff', font: { family: 'Outfit', size: 12 } } }
+                },
+                scales: type !== 'pie' ? {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                } : {}
+            }
+        };
+
+        if (type === 'pie') {
+            // Summary totals for pie
+            const totalPresent = present.reduce((a, b) => a + b, 0);
+            const totalAbsent = absent.reduce((a, b) => a + b, 0);
+            const totalLate = late.reduce((a, b) => a + b, 0);
+            
+            chartConfig.data = {
+                labels: ['Present ✅', 'Absent ❌', 'Late 🕒'],
+                datasets: [{
+                    data: [totalPresent, totalAbsent, totalLate],
+                    backgroundColor: ['rgba(16, 185, 129, 0.6)', 'rgba(244, 63, 94, 0.6)', 'rgba(251, 191, 36, 0.6)'],
+                    borderWidth: 0
+                }]
+            };
+        }
+
+        dailyChart = new Chart(ctx, chartConfig);
+    }
+
+    function renderPeriodSummary(summary) {
+        const container = document.getElementById('period-summary-container');
+        container.innerHTML = '';
+
+        for (let i = 1; i <= 5; i++) {
+            const s = summary.find(item => item.period === i) || { present: 0, absent: 0, late: 0 };
+            const card = document.createElement('div');
+            card.className = 'card stat-card';
+            card.style.padding = '1.5rem';
+            card.innerHTML = `
+                <div style="font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">Period ${i} 🕒</div>
+                <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="color: var(--success); font-weight: 800; font-size: 1.2rem;">${s.present}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Present</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: var(--error); font-weight: 800; font-size: 1.2rem;">${s.absent}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Absent</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: var(--warning); font-weight: 800; font-size: 1.2rem;">${s.late}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Late</div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+    }
+
+    function renderStudentDaily(students) {
+        const container = document.getElementById('student-daily-report');
+        container.innerHTML = '';
+
+        students.forEach(s => {
+            const row = document.createElement('div');
+            row.className = 'student-row';
+            
+            const details = s.period_details ? s.period_details.split(',') : [];
+            const detailMap = {};
+            details.forEach(d => {
+                const [p, status] = d.split(':');
+                detailMap[p] = status;
+            });
+
+            let badgesHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                const status = detailMap[i] || 'N/A';
+                let icon = '⚪';
+                const badgeClass = status === 'Present' ? (icon='✅', 'badge-present') : (status === 'Absent' ? (icon='❌', 'badge-absent') : (status === 'Late' ? (icon='🕒', 'badge-late') : ''));
+                badgesHtml += `<span class="badge ${badgeClass}" title="Period ${i}">${i}: ${icon}</span> `;
+            }
+
+            row.innerHTML = `
+                <div class="student-info">
+                    <div style="font-weight: 700; font-size: 1.1rem;">${s.name} <span style="font-size: 0.85rem; color: var(--primary); opacity: 0.8;">[${s.reg_no || '---'}]</span></div>
+                    <div class="period-badges" style="margin-top: 0.8rem;">${badgesHtml}</div>
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 1.2rem; font-weight: 900; color: var(--primary);">${s.present}/5</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Completed</div>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    loadDailyAnalysis();
+</script>
+{% endblock %}

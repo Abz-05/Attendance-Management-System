@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Students{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1><i class="fas fa-users"></i> Class Students</h1>
+        <button class="btn btn-primary" onclick="openAddModal()">
+            <i class="fas fa-user-plus"></i> Add Student
+        </button>
+    </div>
+
+    <div class="attendance-grid" id="students-list">
+        <!-- Student list will be loaded here -->
+    </div>
+</div>
+
+<!-- Simple Modal for Adding Student -->
+<div id="student-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="card" style="width: 100%; max-width: 500px; padding: 2.5rem;">
+        <h2 id="modal-title">Add New Student</h2>
+        <div class="form-group">
+            <label>Registration Number</label>
+            <input type="text" id="stu-reg" placeholder="e.g. C3S48851">
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="stu-name" placeholder="Enter student name">
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="stu-email" placeholder="student@example.com">
+        </div>
+        <div class="grid-stats" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 0;">
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="stu-phone" placeholder="9876543210">
+            </div>
+            <div class="form-group">
+                <label>Current CGPA</label>
+                <input type="number" id="stu-cgpa" step="0.01" placeholder="8.5">
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+            <button class="btn" style="background: var(--glass);" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadStudents() {
+        try {
+            const response = await fetch('/api/students/list');
+            const data = await response.json();
+            if (data.success) {
+                const container = document.getElementById('students-list');
+                container.innerHTML = '';
+                data.students.forEach(s => {
+                    const row = document.createElement('div');
+                    row.className = 'student-row';
+                    row.innerHTML = `
+                        <div class="student-info">
+                            <div style="font-weight: 600;">${s.name} <span style="font-size: 0.8rem; color: var(--primary); margin-left: 0.5rem;">[${s.reg_no || 'N/A'}]</span></div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">${s.email || 'No email'} | ${s.phone || 'No phone'}</div>
+                        </div>
+                        <div style="text-align: right; color: var(--text-secondary); font-size: 0.8rem;">
+                            <div>CGPA: <span style="color: var(--primary); font-weight: 600;">${s.cgpa || 'N/A'}</span></div>
+                            <div>Joined: ${s.join_date}</div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    function openAddModal() {
+        document.getElementById('student-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('student-modal').style.display = 'none';
+    }
+
+    async function saveStudent() {
+        const name = document.getElementById('stu-name').value;
+        const email = document.getElementById('stu-email').value;
+        const reg_no = document.getElementById('stu-reg').value;
+        const phone = document.getElementById('stu-phone').value;
+        const cgpa = document.getElementById('stu-cgpa').value;
+
+        if (!name) {
+            showAlert('Name is required', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/students/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, reg_no, phone, cgpa })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showAlert('Student added successfully!');
+                closeModal();
+                loadStudents();
+            } else {
+                showAlert(result.message, 'error');
+            }
+        } catch (e) {
+            showAlert('Error connecting to server', 'error');
+        }
+    }
+
+    loadStudents();
+</script>
+{% endblock %}

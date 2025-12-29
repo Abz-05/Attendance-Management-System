@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DS Attendance System - {% block title %}{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <i class="fas fa-brain"></i> DS ANALYTICS 🧬
+        </div>
+        <div class="nav-links">
+            <a href="/" id="nav-home">🏠 Dashboard</a>
+            <a href="/attendance" id="nav-attendance">📝 Attendance</a>
+            <a href="/students" id="nav-students">👥 Students List</a>
+            <a href="/reports" id="nav-reports">📊 Analytics</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Set active nav link
+        document.addEventListener('DOMContentLoaded', () => {
+            const path = window.location.pathname;
+            if (path === '/') document.getElementById('nav-home').classList.add('active');
+            else if (path.includes('attendance')) document.getElementById('nav-attendance').classList.add('active');
+            else if (path.includes('students')) document.getElementById('nav-students').classList.add('active');
+            else if (path.includes('reports')) document.getElementById('nav-reports').classList.add('active');
+        });
+
+        // Global Alert helper
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '2rem';
+            alertDiv.style.right = '2rem';
+            alertDiv.style.padding = '1rem 2rem';
+            alertDiv.style.borderRadius = '1rem';
+            alertDiv.style.background = type === 'success' ? '#22c55e' : '#ef4444';
+            alertDiv.style.color = 'white';
+            alertDiv.style.zIndex = '1000';
+            alertDiv.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+            alertDiv.textContent = message;
+            
+            document.body.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
