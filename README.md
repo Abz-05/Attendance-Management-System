@@ -1,250 +1,313 @@
-# Attendance Management System
+# 🎓 Attendance Management System
 
-A simple web-based attendance management system built with HTML, PHP, and MySQL. This system allows users to submit attendance records through a user-friendly web interface.
+A comprehensive, modern web-based attendance management system built with **Python Flask**, **MySQL**, **HTML/CSS/JavaScript**, and **Chart.js** for beautiful data visualizations.
 
-## 📋 Features
+![System Status](https://img.shields.io/badge/status-active-success.svg)
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Flask](https://img.shields.io/badge/flask-3.0.0-green.svg)
+![MySQL](https://img.shields.io/badge/mysql-8.0+-orange.svg)
 
-- **User-friendly Interface**: Clean, modern HTML form with responsive design
-- **Secure Backend**: PHP with prepared statements to prevent SQL injection
-- **Data Validation**: Both client-side and server-side validation
-- **Real-time Feedback**: AJAX-based form submission with instant feedback
-- **Database Management**: MySQL database with proper relationships and constraints
-- **Sample Data**: Pre-populated with test users for immediate testing
+## ✨ Features
 
-## 🗂️ Project Structure
+### 📝 Attendance Management
 
-```
-Attendance management System/
-├── attendance.html          # Frontend form for attendance submission
-├── attendance_form.php      # Backend handler for form processing
-├── db_connect.php          # Database connection configuration
-├── database_setup.sql      # Database and tables creation script
-└── README.md              # This file
-```
+- **Period-wise Tracking**: Mark attendance for 5 periods per day
+- **Quick Actions**: Mark all present/absent with one click
+- **Real-time Updates**: Instant feedback and validation
+- **Date Selection**: Mark attendance for any date
+- **Faculty & Subject Selection**: Organized by faculty and subject
 
-## 🚀 Installation Instructions
+### 📊 Analytics Dashboard
+
+- **Interactive Charts**: Switch between Bar, Line, and Pie charts
+- **Real-time Statistics**: Total students, average attendance, classes, and late arrivals
+- **Student-wise Reports**: Detailed attendance percentage for each student
+- **Visual Insights**: Color-coded attendance status
+- **Auto-refresh**: Updates every 30 seconds
+
+### 📅 Daily Reports
+
+- **Period-wise View**: See all 5 periods for any date
+- **Summary Statistics**: Quick overview of daily attendance
+- **Subject Information**: View which subject was taught in each period
+- **Faculty Details**: See which faculty conducted each class
+
+### 🎨 Modern UI/UX
+
+- **Vibrant Design**: Beautiful gradients and glassmorphism effects
+- **Responsive Layout**: Works on desktop, tablet, and mobile
+- **Smooth Animations**: Hover effects and transitions
+- **Professional Typography**: Inter font family
+- **Intuitive Navigation**: Easy-to-use interface
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Web server (Apache/Nginx) with PHP support
-- MySQL/MariaDB database server
-- phpMyAdmin (recommended) or MySQL command-line client
-- PHP 7.0 or higher
-- Web browser
+- XAMPP (Apache + MySQL)
+- Python 3.8 or higher
+- Modern web browser
 
-### Step 1: Setup Database
+### Installation
 
-1. Open **phpMyAdmin** in your web browser (usually at `http://localhost/phpmyadmin`)
-2. Click on the **"SQL"** tab at the top
-3. Open the `database_setup.sql` file in a text editor
-4. Copy the entire contents of the file
-5. Paste it into the SQL query box in phpMyAdmin
-6. Click **"Go"** to execute the script
-
-Alternatively, using MySQL command line:
+1. **Clone the repository**
 
 ```bash
-mysql -u root -p < database_setup.sql
+git clone https://github.com/Abz-05/Attendance-Management-System.git
+cd Attendance-Management-System
 ```
 
-The script will:
+2. **Install Python dependencies**
 
-- Create the `attendance_system` database
-- Create `users` and `attendance` tables
-- Insert 3 sample users (IDs: 1, 2, 3)
-- Set up foreign key relationships
+```bash
+pip install -r requirements.txt
+```
 
-### Step 2: Configure Database Connection
+3. **Set up the database**
 
-1. Open `db_connect.php` in a text editor
-2. Update the database credentials if needed:
-   ```php
-   define('DB_HOST', 'localhost');     // Your MySQL host
-   define('DB_USER', 'root');           // Your MySQL username
-   define('DB_PASS', '');               // Your MySQL password
-   define('DB_NAME', 'attendance_system');
-   ```
-3. Save the file
+```bash
+# Start MySQL in XAMPP
+# Then import the database
+mysql -u root < attendance_system_setup.sql
+```
 
-### Step 3: Deploy Files
+4. **Start the API server**
 
-1. Copy all project files to your web server's document root:
-   - **XAMPP**: `C:\xampp\htdocs\attendance\`
-   - **WAMP**: `C:\wamp\www\attendance\`
-   - **Custom**: Your web server's configured document root
+```bash
+python api_server.py
+```
 
-### Step 4: Start Web Server
+5. **Open the application**
 
-1. Start your web server (Apache) and MySQL service
-   - **XAMPP**: Open XAMPP Control Panel, start Apache and MySQL
-   - **WAMP**: Start WAMP Server
-2. Ensure both services are running (green status)
+```
+Open index.html in your browser
+```
 
-### Step 5: Access the Application
+## 📁 Project Structure
 
-1. Open your web browser
-2. Navigate to: `http://localhost/attendance/attendance.html`
-3. The attendance form should load successfully
+```
+Attendance-Management-System/
+├── 📄 index.html                    # Main landing page
+├── 📄 mark_attendance.html          # Attendance marking interface
+├── 📄 analytics.html                # Analytics dashboard with charts
+├── 📄 daily_report.html             # Daily attendance reports
+├── 🐍 api_server.py                 # Flask API backend
+├── 🐍 db_config_new.py              # Database configuration
+├── 🗄️ attendance_system_setup.sql   # Database schema & data
+├── 📋 requirements.txt              # Python dependencies
+├── 📖 SETUP_GUIDE.md                # Detailed setup instructions
+├── 📖 QUICK_START.md                # Quick reference guide
+└── 📖 README.md                     # This file
+```
 
-## 📖 Usage Guide
+## 🎯 System Configuration
 
-### Submitting Attendance
+### Students
 
-1. **Employee ID**: Enter a valid employee ID (Sample IDs: 1, 2, or 3)
-2. **Date**: Select the date (defaults to today)
-3. **Status**: Choose from Present, Absent, or Leave
-4. Click **"Submit Attendance"**
+- **Total**: 23 students
+- **Registration Numbers**: C3S48851 to C3S48874
+- **Details**: Name, Email, Phone, Board, Marks, CGPA
 
-### Success Response
+### Faculty & Subjects
 
-- Green message confirming attendance was recorded
-- Form resets automatically
-- Employee name is displayed in the confirmation
+| Faculty     | Subject                       |
+| ----------- | ----------------------------- |
+| Ratchana B  | Machine Learning              |
+| S. Karthiga | Big Data Analytics            |
+| DSP         | Computer Networks             |
+| Maniram     | Statistical Data Analysis     |
+| Maniram     | Statistical Data Analysis Lab |
 
-### Error Handling
+### Period Timings
 
-- Red message for validation errors
-- Duplicate attendance prevention
-- Invalid employee ID detection
+| Period    | Time          | Duration |
+| --------- | ------------- | -------- |
+| Period 1  | 09:00 - 09:50 | 50 mins  |
+| Period 2  | 09:50 - 10:40 | 50 mins  |
+| **Break** | 10:40 - 11:00 | 20 mins  |
+| Period 3  | 11:00 - 11:50 | 50 mins  |
+| Period 4  | 11:50 - 12:40 | 50 mins  |
+| **Lunch** | 12:40 - 13:30 | 50 mins  |
+| Period 5  | 13:30 - 15:10 | 100 mins |
 
-## 🗄️ Database Schema
+## 🔌 API Endpoints
 
-### Users Table
+| Method | Endpoint                    | Description        |
+| ------ | --------------------------- | ------------------ |
+| GET    | `/api/health`               | Health check       |
+| GET    | `/api/students`             | Get all students   |
+| GET    | `/api/faculty`              | Get all faculty    |
+| POST   | `/api/attendance/mark`      | Mark attendance    |
+| GET    | `/api/attendance/daily`     | Get daily report   |
+| GET    | `/api/attendance/analytics` | Get analytics data |
+| POST   | `/api/student/add`          | Add new student    |
+| GET    | `/api/periods`              | Get period timings |
+
+## 💾 Database Schema
+
+### Students Table
 
 ```sql
-id          INT (Primary Key, Auto Increment)
-name        VARCHAR(100)
-email       VARCHAR(100) UNIQUE
-password    VARCHAR(255)
-role        VARCHAR(50)
-created_at  TIMESTAMP
+- id (Primary Key)
+- reg_no (Unique)
+- name
+- email (Unique)
+- phone
+- board
+- marks
+- cgpa
+- join_date
+- created_at
+```
+
+### Faculty Table
+
+```sql
+- id (Primary Key)
+- name
+- subject
+- created_at
 ```
 
 ### Attendance Table
 
 ```sql
-id          INT (Primary Key, Auto Increment)
-user_id     INT (Foreign Key → users.id)
-date        DATE
-status      ENUM('Present', 'Absent', 'Leave')
-created_at  TIMESTAMP
+- id (Primary Key)
+- student_id (Foreign Key)
+- faculty_id (Foreign Key)
+- subject
+- date
+- period (1-5)
+- status (Present/Absent/Late)
+- created_at
 ```
 
-### Sample Users (Pre-populated)
+## 🛠️ Technologies Used
 
-| ID  | Name       | Email                  | Role     |
-| --- | ---------- | ---------------------- | -------- |
-| 1   | John Doe   | john.doe@example.com   | employee |
-| 2   | Jane Smith | jane.smith@example.com | employee |
-| 3   | Admin User | admin@example.com      | admin    |
+### Backend
 
-**Note**: Sample password for all users is `password` (hashed in database)
+- **Python 3.8+**: Core programming language
+- **Flask 3.0.0**: Web framework for API
+- **MySQL 8.0+**: Database management
+- **mysql-connector-python**: Database connectivity
 
-## 🔧 Troubleshooting
+### Frontend
 
-### Database Connection Failed
+- **HTML5**: Structure
+- **CSS3**: Styling with gradients and animations
+- **JavaScript (ES6+)**: Interactivity and API calls
+- **Chart.js 4.4.0**: Data visualization
+- **Inter Font**: Modern typography
 
-- **Problem**: Error message about database connection
-- **Solution**:
-  - Verify MySQL service is running
-  - Check credentials in `db_connect.php`
-  - Ensure `attendance_system` database exists
+### Tools
 
-### Employee ID Not Found
+- **XAMPP**: Local development environment
+- **Git**: Version control
+- **GitHub**: Repository hosting
 
-- **Problem**: "Employee ID not found in the system"
-- **Solution**: Use sample IDs (1, 2, or 3) or add new users via phpMyAdmin
+## 📊 Screenshots
 
-### Attendance Already Exists
+### Landing Page
 
-- **Problem**: "Attendance for this employee on this date already exists"
-- **Solution**: Each employee can only have one attendance record per date. Change the date or employee ID.
+Beautiful, modern landing page with system statistics and quick navigation.
 
-### Form Not Submitting
+### Mark Attendance
 
-- **Problem**: Nothing happens when clicking submit
-- **Solution**:
-  - Check browser console for JavaScript errors (F12)
-  - Ensure `attendance_form.php` is in the same directory
-  - Verify web server is running
+Intuitive interface for marking attendance with quick actions and real-time validation.
 
-### Blank Page or 404 Error
+### Analytics Dashboard
 
-- **Problem**: Page not loading
-- **Solution**:
-  - Verify files are in the correct web server directory
-  - Check file permissions
-  - Ensure URL is correct (e.g., `http://localhost/attendance/attendance.html`)
+Interactive charts with multiple visualization options (Bar, Line, Pie).
 
-## 🔐 Security Features
+### Daily Reports
 
-- **Prepared Statements**: Protection against SQL injection
-- **Input Validation**: Both client and server-side validation
-- **Data Sanitization**: All user inputs are sanitized
-- **Password Hashing**: User passwords are hashed with bcrypt
-- **Unique Constraints**: Prevents duplicate attendance entries
+Comprehensive period-wise attendance view with summary statistics.
 
-## 🎨 Features & Enhancements
+## 🔒 Security Features
 
-### Current Features
+- Input validation on all forms
+- SQL injection prevention with parameterized queries
+- Error handling and logging
+- CORS configuration for API security
 
-- Modern gradient design with glassmorphism effect
-- Responsive layout for mobile and desktop
-- Smooth animations and transitions
-- Real-time form validation
-- AJAX submission without page reload
-- Automatic form reset on success
-- Auto-hiding success/error messages
+## 🐛 Troubleshooting
 
-### Potential Enhancements
+### Common Issues
 
-- User authentication and login system
-- Attendance history view
-- Admin dashboard for managing users
-- Export attendance reports (CSV/PDF)
-- Email notifications
-- Bulk attendance upload
-- Calendar view for attendance
-- Leave request management
+**Issue**: Can't fetch students  
+**Solution**: Ensure API server is running on port 5000
 
-## 📝 API Response Format
+**Issue**: Database connection error  
+**Solution**: Check if MySQL is running in XAMPP
 
-### Success Response
+**Issue**: Charts not displaying  
+**Solution**: Check internet connection (Chart.js loads from CDN)
 
-```json
-{
-  "success": true,
-  "message": "Attendance recorded successfully for John Doe!",
-  "data": {
-    "employee_name": "John Doe",
-    "employee_id": 1,
-    "date": "2025-12-29",
-    "status": "Present"
-  }
-}
-```
+**Issue**: Port 5000 already in use  
+**Solution**: Kill the process or change port in `api_server.py`
 
-### Error Response
+For more troubleshooting help, see [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
-```json
-{
-  "success": false,
-  "message": "Employee ID not found in the system."
-}
-```
+## 📝 Usage
+
+### Marking Attendance
+
+1. Open `mark_attendance.html`
+2. Select faculty (subject auto-fills)
+3. Select period (1-5) and date
+4. Mark Present/Absent/Late for each student
+5. Use quick actions for bulk operations
+6. Submit attendance
+
+### Viewing Analytics
+
+1. Open `analytics.html`
+2. View overall statistics
+3. Switch between chart types (Bar/Line/Pie)
+4. Review detailed student-wise report
+5. Check attendance percentages
+
+### Daily Reports
+
+1. Open `daily_report.html`
+2. Select a date
+3. Click "Load Report"
+4. View period-wise attendance
+5. Check summary statistics
 
 ## 🤝 Contributing
 
-Feel free to fork this project and submit pull requests for any improvements.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is open source and available for educational purposes.
+This project is open source and available under the [MIT License](LICENSE).
 
-## 👨‍💻 Support
+## 👨‍💻 Author
 
-For issues or questions, please check the troubleshooting section or review the code comments for additional guidance.
+**Abzana V**
+
+- GitHub: [@Abz-05](https://github.com/Abz-05)
+- Email: abzanavarhath@gmail.com
+
+## 🙏 Acknowledgments
+
+- Chart.js for beautiful visualizations
+- Flask community for excellent documentation
+- Inter font family for modern typography
+- All contributors and testers
+
+## 📞 Support
+
+For issues, questions, or suggestions:
+
+1. Check the [SETUP_GUIDE.md](SETUP_GUIDE.md)
+2. Review [QUICK_START.md](QUICK_START.md)
+3. Open an issue on GitHub
+4. Contact via email
 
 ---
 
-**Happy Coding! 🚀**
+**Made with ❤️ for efficient attendance management**
+
+⭐ Star this repo if you find it helpful!
